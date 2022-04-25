@@ -1,4 +1,4 @@
-package com.example.androidapptest2
+package com.example.androidapp
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidapptest2.Photo
