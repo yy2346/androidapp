@@ -12,7 +12,7 @@ class PhotoAdapter (
 
 {
 
-    public val photos1 = photos
+    internal val photos1 = photos
 
     class PhotoViewHolder ( itemView: View): RecyclerView.ViewHolder(itemView)
 

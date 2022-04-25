@@ -1,9 +1,17 @@
 <resources>
-    <string name="app_name">androidapptest2</string>
-    <string name="idClearDbButton">Clear Db</string>
+    <string name="hello_first_fragment">Hello First Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="action_settings">Action Settings</string>
+    <string name="first_fragment_label">First Fragment Label</string>
+    <string name="second_fragment_label">Second Fragment Label</string>
+    <string name="app_name">androidapp</string>
+    <string name="idClearDbButton">Clear Db*</string>
     <string name="idClearSessionButton">Clear Session</string>
     <string name="idWriteDbButton">W To Db</string>
     <string name="idDisplayDbButton">Display Db</string>
-    <string name="idReadDbButton">R FM Db</string>
-    <string name="idDeleteFromDbButton">Del FM Db</string>
+    <string name="idReadDbButton">R FM Db*</string>
+    <string name="idDeleteFromDbButton">Del FM Db*</string>
+    <string name="idClearLogButton">Clear Log*</string>
+    <string name="idReadLogButton">Read Log*</string>
 </resources>
