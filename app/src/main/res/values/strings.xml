@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">androidapptest2</string>
+    <string name="idClearDbButton">Clear Db</string>
+    <string name="idClearSessionButton">Clear Session</string>
+    <string name="idWriteDbButton">W To Db</string>
+    <string name="idDisplayDbButton">Display Db</string>
+    <string name="idReadDbButton">R FM Db</string>
+    <string name="idDeleteFromDbButton">Del FM Db</string>
+</resources>
