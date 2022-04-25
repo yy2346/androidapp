@@ -28,6 +28,15 @@ class MainActivity : AppCompatActivity() {
     private val file:String = fileName
     private val dateTime = LocalDateTime.now()
 
+    // Password variables
+    private val pwdFile = "password.txt"
+    private var pwdData = ""
+    private val fileP:String = pwdFile
+    private var pwdDef = "CSC 202"
+    private var pwdUsr = "#!%GMG!:T%!:TM"
+    private var chgPwd = 0
+    private var usrAuth = 0;
+
     private lateinit var photoAdapter: PhotoAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -41,11 +50,37 @@ class MainActivity : AppCompatActivity() {
         fileOutputStream.write(dateTime.toString().toByteArray())
         fileOutputStream.write("\n".toByteArray())
 
+        //Reading password from file (if exists)
+        try {
+            var pwdInputStream: FileInputStream? = null
+            pwdInputStream = openFileInput(fileP)
+            var inputStreamReader: InputStreamReader = InputStreamReader(pwdInputStream)
+            val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
+            var text: String? = null
+            while ({ text = bufferedReader.readLine(); text }() != null) {
+                pwdUsr = text.toString()
+            }
+            pwdInputStream.close()
+        } catch (e:Exception) {
+            tvId.setText("Change password!")
+            val dirP = getFilesDir()
+            val filePd = File(dirP, "password.txt")
+            filePd.delete()
+
+            var pwdOutputStream: FileOutputStream
+            pwdOutputStream = openFileOutput(fileP, Context.MODE_APPEND)
+            pwdOutputStream.write(pwdUsr.toByteArray())
+            pwdOutputStream.flush()
+            pwdOutputStream.close()
+
+        }
+
         photoAdapter = PhotoAdapter(mutableListOf())
         rvItems.adapter = photoAdapter
         rvItems.layoutManager = LinearLayoutManager(this)
         idAddButton.setOnClickListener {
-
+            chgPwd = 0
+            usrAuth = 0
             val photoId = tvId.text.toString()
 
             if (photoId.isNotEmpty()){
@@ -61,6 +96,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         idWriteDbButton.setOnClickListener {
+            chgPwd = 0
+            usrAuth = 0
             for (i in 0 until photoAdapter.photos1.size) {
                 fileData = "Write db: " + (photoAdapter.photos1[i]).id.toString() + "\n"
                 fileOutputStream.write(fileData.toByteArray())
@@ -70,13 +107,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         idReadDbButton.setOnClickListener {
-            fileData = "Read from db\n"
-            fileOutputStream.write(fileData.toByteArray())
-            readFromDB()
+            chgPwd = 0
+            usrAuth = 0
+            val photoId = tvId.text.toString()
+            if (photoId.equals(pwdUsr)) {
+                fileData = "Read from db\n"
+                fileOutputStream.write(fileData.toByteArray())
+
+                readFromDB()
+                tvId.setText("Read from db")
+            } else {
+                fileData = "ATTEMPTED READ FROM DB - PWD INVALID\n"
+                fileOutputStream.write(fileData.toByteArray())
+
+                tvId.setText("Pwd invalid")
+            }
+
         }
 
         idDeleteButton.setOnClickListener {
-
+            chgPwd = 0
+            usrAuth = 0
             val photoId = tvId.text.toString()
             if (photoId.isNotEmpty()){
                 var count = 0
@@ -99,66 +150,143 @@ class MainActivity : AppCompatActivity() {
         }
 
         idClearDbButton.setOnClickListener {
-            fileData = "Clear db\n"
-            fileOutputStream.write(fileData.toByteArray())
-
-            clearDb()
-        }
-
-        idClearSessionButton.setOnClickListener {
-            fileData = "Clear session\n"
-            fileOutputStream.write(fileData.toByteArray())
-
-            photoAdapter.clearSession()
-        }
-
-        idDisplayDbButton.setOnClickListener {
-            fileData = "Display db\n"
-            fileOutputStream.write(fileData.toByteArray())
-
-            val db = dbHelper.readableDatabase
-            val projection = arrayOf(FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE)
-            val cursor = db.query(FeedReaderContract.FeedEntry.TABLE_NAME, projection, null, null, null, null, null)
-
-            var things = mutableListOf<String>()
-            with(cursor) {
-                while (moveToNext()) {
-                    val thing = getString(getColumnIndexOrThrow("thing"))
-                    things.add(thing)
-                }
-            }
-            System.out.println(things.toString());
-        }
-
-        idDeleteFromDbButton.setOnClickListener {
+            chgPwd = 0
+            usrAuth = 0
             val photoId = tvId.text.toString()
-            if (photoId.isNotEmpty()){
-                fileData = "Delete all instances from db of: " + photoId  + "\n"
+            if (photoId.equals(pwdUsr)) {
+                fileData = "Clear db\n"
                 fileOutputStream.write(fileData.toByteArray())
 
-                deleteFromDb(photoId)
-                tvId.text.clear()
+                clearDb()
+                tvId.setText("Db cleared")
+            } else {
+                fileData = "ATTEMPTED CLEAR DB - PWD INVALID\n"
+                fileOutputStream.write(fileData.toByteArray())
+
+                tvId.setText("Pwd invalid")
+
             }
+           }
+
+
+            idClearSessionButton.setOnClickListener {
+                chgPwd = 0
+                usrAuth = 0
+                fileData = "Clear session\n"
+                fileOutputStream.write(fileData.toByteArray())
+
+                photoAdapter.clearSession()
+            }
+
+            idDisplayDbButton.setOnClickListener {
+                chgPwd = 0
+                usrAuth = 0
+                fileData = "Display db\n"
+                fileOutputStream.write(fileData.toByteArray())
+
+                val db = dbHelper.readableDatabase
+                val projection = arrayOf(FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE)
+                val cursor = db.query(FeedReaderContract.FeedEntry.TABLE_NAME, projection, null, null, null, null, null)
+
+                var things = mutableListOf<String>()
+                with(cursor) {
+                    while (moveToNext()) {
+                        val thing = getString(getColumnIndexOrThrow("thing"))
+                        things.add(thing)
+                    }
+                }
+                System.out.println(things.toString());
+            }
+
+            idDeleteFromDbButton.setOnClickListener {
+                chgPwd = 0
+                val photoId = tvId.text.toString()
+                if (usrAuth == 0 && (photoId.equals(pwdUsr))) {
+                    tvId.setText("Pwd OK - enter text")
+                    usrAuth = 1;
+                } else if (usrAuth == 1) {
+                    if (photoId.isNotEmpty()) {
+                        fileData = "Delete all instances from db of: " + photoId + "\n"
+                        fileOutputStream.write(fileData.toByteArray())
+
+                        deleteFromDb(photoId)
+                        tvId.text.clear()
+                    }
+                    usrAuth = 0
+                    tvId.setText("Deleted from db")
+                } else {
+                    fileData = "ATTEMPTED DELETE FROM DB - PWD INVALID\n"
+                    fileOutputStream.write(fileData.toByteArray())
+
+                    tvId.setText("Pwd invalid")
+
+                }
+            }
+
+            idClearLogButton.setOnClickListener {
+                chgPwd = 0
+                usrAuth = 0
+                val photoId = tvId.text.toString()
+                if (photoId.equals(pwdUsr)) {
+                    val dir = getFilesDir()
+                    val fileD = File(dir, "transact.log")
+                    fileD.delete()
+                    fileOutputStream = openFileOutput(file, Context.MODE_APPEND)
+
+                    fileData = "Log cleared and new log started at " + dateTime + "\n"
+                    fileOutputStream.write(fileData.toByteArray())
+
+                    tvId.setText("Log cleared")
+                } else {
+                    fileData = "ATTEMPTED CLEAR LOG - PWD INVALID\n"
+                    fileOutputStream.write(fileData.toByteArray())
+
+                    tvId.setText("Pwd invalid")
+                }
+            }
+
+            idReadLogButton.setOnClickListener {
+                chgPwd = 0
+                usrAuth = 0
+                fileData = "Log read at " + dateTime + "\n"
+                fileOutputStream.write(fileData.toByteArray())
+
+            }
+
+            idChangePwdButton.setOnClickListener {
+                usrAuth = 0
+                val photoId = tvId.text.toString()
+                if (chgPwd == 0 && (photoId.equals(pwdUsr) || photoId.equals(pwdDef))) {
+                    fileData = "Pwd OK entered at " + dateTime + "\n"
+                    fileOutputStream.write(fileData.toByteArray())
+
+                    tvId.setText("Pwd OK - Clk again")
+                    chgPwd = 1;
+                } else if (chgPwd == 1) {
+                    fileData = "Pwd changed at " + dateTime + "\n"
+                    fileOutputStream.write(fileData.toByteArray())
+
+                    pwdUsr = photoId
+                    chgPwd = 0;
+
+                    val dirP = getFilesDir()
+                    val filePd = File(dirP, "password.txt")
+                    filePd.delete()
+
+                    var pwdOutputStream:FileOutputStream
+                    pwdOutputStream = openFileOutput(fileP, Context.MODE_APPEND)
+                    pwdOutputStream.write(pwdUsr.toByteArray())
+
+                    tvId.setText("Pwd changed")
+                } else {
+                    fileData = "PWD INVALID ENTERED AT " + dateTime + "\n"
+                    fileOutputStream.write(fileData.toByteArray())
+
+                    tvId.setText("Pwd invalid")
+                }
+            }
+
         }
-
-        idClearLogButton.setOnClickListener {
-            val dir = getFilesDir()
-            val fileD = File(dir, "transact.log")
-            fileD.delete()
-            fileOutputStream = openFileOutput(file, Context.MODE_APPEND)
-
-            fileData = "Log cleared and new log started at " + dateTime + "\n"
-            fileOutputStream.write(fileData.toByteArray())
-
-        }
-
-        idReadLogButton.setOnClickListener {
-            fileData = "Log read at " + dateTime + "\n"
-            fileOutputStream.write(fileData.toByteArray())
-
-        }
-
-    }
 
     fun insertIntoDB(photoId: String){
 

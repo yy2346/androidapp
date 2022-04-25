@@ -74,14 +74,20 @@
             android:layout_height="wrap_content"
             android:id="@+id/idClearLogButton"
             android:text="@string/idClearLogButton" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="4dp"
-            android:layout_marginBottom="392dp"/>
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="124dp"
+            android:layout_marginBottom="244dp"/>
     <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/idReadLogButton"
             android:text="@string/idReadLogButton" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="344dp"/>
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="128dp"
+            android:layout_marginBottom="196dp"/>
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/idChangePwdButton"
+            android:text="@string/idChangePwdButton" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="4dp"
+            android:layout_marginBottom="340dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
